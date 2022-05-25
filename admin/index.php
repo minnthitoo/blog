@@ -35,7 +35,7 @@ if (!isset($_SESSION['user_id'])) {
             <!-- /.card-header -->
             <div class="card-body">
               <?php
-              $sql = $pdo->prepare("select * from posts");
+              $sql = $pdo->prepare("select * from posts order by id desc");
               $sql->execute();
               $res = $sql->fetchAll();
               ?>
@@ -51,10 +51,11 @@ if (!isset($_SESSION['user_id'])) {
                 <tbody>
                   <?php
                   if ($res) {
+                    $i = 1;
                     foreach ($res as $value) {
                   ?>
                       <tr>
-                        <td><?php echo $value['id']; ?></td>
+                        <td><?php echo $i; ?></td>
                         <td><?php echo $value['title']; ?></td>
                         <td><?php echo $value['content']; ?></td>
                         <td>
@@ -63,6 +64,7 @@ if (!isset($_SESSION['user_id'])) {
                         </td>
                       </tr>
                   <?php
+                  $i++;
                     }
                   }
                   ?>

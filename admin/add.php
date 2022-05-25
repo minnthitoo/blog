@@ -4,10 +4,30 @@ require('../config/config.php');
 if (!isset($_SESSION['user_id'])) {
   header("Location: login.php");
 }
-if($_SERVER['REQUEST_METHOD'] == 'POST'){
-  var_dump($_POST);
-  echo "<br>";
-  var_dump($_FILES);
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+  $title = $_POST['title'];
+  $content = $_POST['content'];
+
+  $image = $_FILES['image']['name'];
+  $img_dir = "../images/";
+  $uploadimg = $img_dir . basename($_FILES['image']['name']);
+
+  $type = strtolower(pathinfo($uploadimg, PATHINFO_EXTENSION));
+  if ($type != 'jpg' && $type != 'png' && $type != 'jpeg') {
+    echo "<script>alert('only jpg, png, jpeg allowed');</script>";
+  } else {
+    if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadimg)) {
+      $sql = "insert into posts (`title`, `content`, `image`) values ('$title', '$content', '$image');";
+      $stmt = $pdo->prepare($sql);
+      $result = $stmt->execute();
+      if ($result) {
+        echo '<script>alert("Successfully");</script>';
+        header('Location: index.php');
+      } else {
+        echo '<script>alert("Error");</script>';
+      }
+    }
+  }
 }
 ?>
 <?php include('header.php'); ?>
@@ -48,13 +68,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
                 </div>
                 <div class="form-group mb-2">
                   <label for="">Image</label>
-                  <input type="file" name="image" id="" class="form-control">
+                  <input type="file" name="image" id="" class="form-control" require>
                 </div>
                 <div class="form-group mb-2">
-                <input type="submit" value="   Post   " class="btn btn-primary">
-                <a href="index.php" class="btn btn-success"> Back </a>
+                  <input type="submit" value="   Post   " class="btn btn-primary">
+                  <a href="index.php" class="btn btn-success"> Back </a>
                 </div>
-            </form>
+              </form>
             </div>
             <!-- /.card-body -->
           </div>
